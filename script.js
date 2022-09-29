@@ -41,17 +41,15 @@ function playRound(playerSelection, computerSelection) {
       }
       break;
   }
-  let playerSelectionFormatted = capitalizeFirstLetter(playerSelection);
-  let computerSelectionFormatted = capitalizeFirstLetter(computerSelection);
   switch (result) {
     case "win":
-      return `You win! ${playerSelectionFormatted} beats ${computerSelectionFormatted}.`
+      return "win";
       break;
     case "loss":
-      return `You lose! ${computerSelectionFormatted} beats ${playerSelectionFormatted}.`
+      return "loss";
       break;
     case "tie":
-      return `It's a tie! ${playerSelectionFormatted} and ${computerSelectionFormatted} are the same.`
+      return "tie";
       break;
   }
 }
@@ -61,6 +59,42 @@ function capitalizeFirstLetter(string) {
   return lowerString.charAt(0).toUpperCase() + lowerString.slice(1);
 }
 
-const playerSelection = "rock";
-const computerSelection = getComputerChoice();
-console.log(playRound(playerSelection, computerSelection));
+function game() {
+  let wins = 0;
+  let losses = 0;
+  let ties = 0;
+  for (let i = 0; i < 5; i++) {
+    let playerSelection = prompt("Rock, paper, or scissors?");
+    let computerSelection = getComputerChoice();
+    gameResult = playRound(playerSelection, computerSelection);
+    let resultMessage = "";
+    let playerSelectionFormatted = capitalizeFirstLetter(playerSelection);
+    let computerSelectionFormatted = capitalizeFirstLetter(computerSelection);
+    switch (gameResult) {
+      case "win":
+        resultMessage = `You win! ${playerSelectionFormatted} beats ${computerSelectionFormatted}.`
+        wins += 1;
+        break;
+      case "loss":
+        resultMessage = `You lose! ${computerSelectionFormatted} beats ${playerSelectionFormatted}.`
+        losses += 1;
+        break;
+      case "tie":
+        resultMessage = `It's a tie! ${playerSelectionFormatted} and ${computerSelectionFormatted} are the same.`
+        ties += 1;
+        break;
+    }
+    console.log(resultMessage);
+  }
+  if (wins > losses) {
+    console.log(`FINAL RESULT: You win, ${wins} to ${losses}.`)
+  } else if (wins === losses) {
+    console.log(`FINAL RESULT: It's a tie, ${wins} to ${losses}.`)
+  } else if (wins < losses) {
+    console.log(`FINAL RESULT: You lose, ${wins} to ${losses}.`)
+  }
+}
+
+game();
+
+
