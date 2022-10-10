@@ -1,14 +1,17 @@
+// GAME
+let wins = 0;
+let losses = 0;
+
 function getComputerChoice() {
-  randomNumber = Math.random();
-  let computerSelection = "";
-  if((randomNumber >= 0) && (randomNumber < 1/3)) {
-    computerSelection = "rock";
-  } else if ((randomNumber >= 1/3) && (randomNumber < 2/3)) {
-    computerSelection = "paper";
-  } else {
-    computerSelection = "scissors";
+  let randomNumber = Math.floor(Math.random() * 3);
+  switch (randomNumber) {
+    case 0:
+      return 'rock';
+    case 1:
+      return 'paper';
+    case 2:
+      return 'scissors';
   }
-  return computerSelection;
 }
 
 function playRound(playerSelection, computerSelection) {
@@ -41,60 +44,82 @@ function playRound(playerSelection, computerSelection) {
       }
       break;
   }
+}
+
+function displayRoundResult(result, playerSelection, computerSelection) {
+  let resultMessage = "";
+  let playerSelectionFormatted = capitalizeFirstLetter(playerSelection);
+  let computerSelectionFormatted = capitalizeFirstLetter(computerSelection);
   switch (result) {
     case "win":
-      return "win";
+      resultMessage = 
+      `You win! ${playerSelectionFormatted} beats ${computerSelectionFormatted}.`
+      wins += 1;
       break;
     case "loss":
-      return "loss";
+      resultMessage = 
+      `You lose! ${computerSelectionFormatted} beats ${playerSelectionFormatted}.`
+      losses += 1;
       break;
     case "tie":
-      return "tie";
+      resultMessage = 
+      `It's a tie!`
       break;
   }
+  resultsDiv.textContent = resultMessage;
+  playerScoreDiv.textContent = `Player score: ${wins}`
+  computerScoreDiv.textContent = `Computer score: ${losses}`
+  if (wins === 5 || losses === 5) {
+    displayFinalResult(wins, losses);
+    mainContent.appendChild(restartButton);
+    restartButton.setAttribute('id', 'restartButton');
+  }
+}
+
+function displayFinalResult(wins, losses) {
+  if (wins > losses) {
+    finalResultDiv.textContent = 'FINAL RESULT: You win!';
+  } else if (wins < losses) {
+    finalResultDiv.textContent = 'FINAL RESULT: You lose...';
+  }
+}
+
+function restartGame() {
+  wins = 0;
+  losses = 0;
+  resultsDiv.textContent = "";
+  playerScoreDiv.textContent = `Player score: ${wins}`;
+  computerScoreDiv.textContent = `Computer score: ${losses}`;
+  finalResultDiv.textContent = "";
+  mainContent.removeChild(restartButton);
 }
 
 function capitalizeFirstLetter(string) {
-  lowerString = string.toLowerCase();
-  return lowerString.charAt(0).toUpperCase() + lowerString.slice(1);
+  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 }
 
-function game() {
-  let wins = 0;
-  let losses = 0;
-  let ties = 0;
-  for (let i = 0; i < 5; i++) {
-    let playerSelection = prompt("Rock, paper, or scissors?");
-    let computerSelection = getComputerChoice();
-    gameResult = playRound(playerSelection, computerSelection);
-    let resultMessage = "";
-    let playerSelectionFormatted = capitalizeFirstLetter(playerSelection);
-    let computerSelectionFormatted = capitalizeFirstLetter(computerSelection);
-    switch (gameResult) {
-      case "win":
-        resultMessage = `You win! ${playerSelectionFormatted} beats ${computerSelectionFormatted}.`
-        wins += 1;
-        break;
-      case "loss":
-        resultMessage = `You lose! ${computerSelectionFormatted} beats ${playerSelectionFormatted}.`
-        losses += 1;
-        break;
-      case "tie":
-        resultMessage = `It's a tie! ${playerSelectionFormatted} and ${computerSelectionFormatted} are the same.`
-        ties += 1;
-        break;
-    }
-    console.log(resultMessage);
-  }
-  if (wins > losses) {
-    console.log(`FINAL RESULT: You win, ${wins} to ${losses}.`)
-  } else if (wins === losses) {
-    console.log(`FINAL RESULT: It's a tie, ${wins} to ${losses}.`)
-  } else if (wins < losses) {
-    console.log(`FINAL RESULT: You lose, ${wins} to ${losses}.`)
-  }
+// UI
+
+function handleClick(playerSelection) {
+  const computerSelection = getComputerChoice();
+  playRound(playerSelection, computerSelection);
+  displayRoundResult(result, playerSelection, computerSelection);
 }
 
-game();
+const rockBtn = document.querySelector('#rock');
+const paperBtn = document.querySelector('#paper');
+const scissorsBtn = document.querySelector('#scissors');
+const resultsDiv = document.querySelector('.results');
+const playerScoreDiv = document.querySelector('.playerScore');
+const computerScoreDiv = document.querySelector('.computerScore');
+const finalResultDiv = document.querySelector('.finalResult');
+const mainContent = document.querySelector('.main-content');
+const restartButton = document.createElement('button');
+
+rockBtn.addEventListener('click', () => handleClick('rock'));
+paperBtn.addEventListener('click', () => handleClick('paper'));
+scissorsBtn.addEventListener('click', () => handleClick('scissors'));
+restartButton.addEventListener('click', () => restartGame());
+restartButton.innerHTML = 'Restart';
 
 
